@@ -140,7 +140,8 @@ spec:
             - name: license
               mountPath: /opt/services/install/configuration/custom/
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /actuator/prometheus
               port: container-port
             initialDelaySeconds: 300
             periodSeconds: 10
@@ -148,7 +149,8 @@ spec:
             successThreshold: 1
             failureThreshold: 10
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /actuator/prometheus
               port: container-port
             initialDelaySeconds: 60
             periodSeconds: 10
@@ -211,7 +213,8 @@ spec:
             - name: var-logs
               mountPath: /opt/services/var
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /actuator/prometheus
               port: container-port
             initialDelaySeconds: 300
             periodSeconds: 10
@@ -219,7 +222,8 @@ spec:
             successThreshold: 1
             failureThreshold: 10
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /actuator/prometheus
               port: container-port
             initialDelaySeconds: 60
             periodSeconds: 10
@@ -290,7 +294,8 @@ spec:
             - name: var-logs
               mountPath: /opt/services/var
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /actuator/prometheus
               port: container-port
             initialDelaySeconds: 300
             periodSeconds: 10
@@ -298,7 +303,8 @@ spec:
             successThreshold: 1
             failureThreshold: 10
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /actuator/prometheus
               port: container-port
             initialDelaySeconds: 60
             periodSeconds: 10
@@ -371,7 +377,8 @@ spec:
             - name: var-logs
               mountPath: /opt/services/var
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /actuator/prometheus
               port: container-port
             initialDelaySeconds: 300
             periodSeconds: 10
@@ -379,7 +386,8 @@ spec:
             successThreshold: 1
             failureThreshold: 10
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /actuator/prometheus
               port: container-port
             initialDelaySeconds: 60
             periodSeconds: 10
@@ -452,7 +460,8 @@ spec:
             - name: var-logs
               mountPath: /opt/services/var
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /actuator/prometheus
               port: container-port
             initialDelaySeconds: 300
             periodSeconds: 10
@@ -460,7 +469,8 @@ spec:
             successThreshold: 1
             failureThreshold: 10
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /actuator/prometheus
               port: container-port
             initialDelaySeconds: 60
             periodSeconds: 10
@@ -531,7 +541,8 @@ spec:
             - name: var-logs
               mountPath: /opt/services/var
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /actuator/prometheus
               port: container-port
             initialDelaySeconds: 300
             periodSeconds: 10
@@ -539,7 +550,8 @@ spec:
             successThreshold: 1
             failureThreshold: 10
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /actuator/prometheus
               port: container-port
             initialDelaySeconds: 60
             periodSeconds: 10
