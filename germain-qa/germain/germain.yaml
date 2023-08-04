@@ -30,8 +30,10 @@ spec:
           resources:
             requests:
               memory: 1024Mi
+              cpu: 100m
             limits:
               memory: 4096Mi
+              cpu: 1000m
           ports:
             - containerPort: 8080
               name: container-port
@@ -113,8 +115,10 @@ spec:
           resources:
             requests:
               memory: 1024Mi
+              cpu: 100m
             limits:
               memory: 4096Mi
+              cpu: 1000m
           ports:
             - containerPort: 8080
               name: container-port
@@ -185,8 +189,10 @@ spec:
           resources:
             requests:
               memory: 512Mi
+              cpu: 100m
             limits:
               memory: 2048Mi
+              cpu: 1000m
           ports:
           - containerPort: 8096
             name: container-port
@@ -264,8 +270,10 @@ spec:
           resources:
             requests:
               memory: 512Mi
+              cpu: 100m
             limits:
               memory: 2048Mi
+              cpu: 1000m
           ports:
             - containerPort: 8080
               name: container-port
@@ -315,7 +323,7 @@ kind: Deployment
 metadata:
   name: germainapm-analytics
 spec:
-  replicas: 1
+  replicas: 0
   minReadySeconds: 10
   strategy:
     type: Recreate
@@ -341,8 +349,10 @@ spec:
           resources:
             requests:
               memory: 512Mi
+              cpu: 100m
             limits:
               memory: 2048Mi
+              cpu: 1000m
           ports:
           - containerPort: 8094
             name: container-port
@@ -420,8 +430,10 @@ spec:
           resources:
             requests:
               memory: 512Mi
+              cpu: 100m
             limits:
               memory: 2048Mi
+              cpu: 1000m
           ports:
           - containerPort: 8092
             name: container-port
@@ -473,7 +485,7 @@ kind: Deployment
 metadata:
   name: germainapm-action
 spec:
-  replicas: 1
+  replicas: 0
   minReadySeconds: 10
   strategy:
     type: Recreate
@@ -499,8 +511,10 @@ spec:
           resources:
             requests:
               memory: 512Mi
+              cpu: 100m
             limits:
               memory: 2048Mi
+              cpu: 1000m
           ports:
             - containerPort: 8080
               name: container-port

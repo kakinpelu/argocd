@@ -30,7 +30,7 @@ spec:
      protocol: TCP
      targetPort: container-port
 
-# STORAGE - INTERNA ACCESS
+# STORAGE - INTERNAL ACCESS
 ---
 apiVersion: v1
 kind: Service
