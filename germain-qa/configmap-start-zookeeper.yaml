@@ -1,0 +1,148 @@
+apiVersion: v1
+data:
+  configData: "#!/usr/bin/env bash\n# Copyright 2017\n#\n# Licensed under the Apache
+    License, Version 2.0 (the \"License\");\n# you may not use this file except in
+    compliance with the License.\n# You may obtain a copy of the License at\n#\n#
+    \    http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable
+    law or agreed to in writing, software\n# distributed under the License is distributed
+    on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+    express or implied.\n# See the License for the specific language governing permissions
+    and\n# limitations under the License.\n#\n#\n#Usage: start-zookeeper [OPTIONS]\n#
+    Starts a ZooKeeper server based on the supplied options.\n#     --servers           The
+    number of servers in the ensemble. The default \n#                         value
+    is 1.\n\n#     --data_dir          The directory where the ZooKeeper process will
+    store its\n#                         snapshots. The default is /var/lib/zookeeper/data.\n\n#
+    \    --data_log_dir      The directory where the ZooKeeper process will store
+    its \n#                         write ahead log. The default is \n#                         /var/lib/zookeeper/data/log.\n\n#
+    \    --conf_dir          The directoyr where the ZooKeeper process will store
+    its\n#                         configuration. The default is /opt/zookeeper/conf.\n\n#
+    \    --client_port       The port on which the ZooKeeper process will listen for
+    \n#                         client requests. The default is 2181.\n\n#     --election_port
+    \    The port on which the ZooKeeper process will perform \n#                         leader
+    election. The default is 3888.\n\n#     --server_port       The port on which
+    the ZooKeeper process will listen for \n#                         requests from
+    other servers in the ensemble. The \n#                         default is 2888.
+    \n\n#     --tick_time         The length of a ZooKeeper tick in ms. The default
+    is \n#                         2000.\n\n#     --init_limit        The number of
+    Ticks that an ensemble member is allowed \n#                         to perform
+    leader election. The default is 10.\n\n#     --sync_limit        The maximum session
+    timeout that the ensemble will \n#                         allows a client to
+    request. The default is 5.\n\n#     --heap              The maximum amount of
+    heap to use. The format is the \n#                         same as that used for
+    the Xmx and Xms parameters to the \n#                         JVM. e.g. --heap=2G.
+    The default is 2G.\n\n#     --max_client_cnxns  The maximum number of client connections
+    that the \n#                         ZooKeeper process will accept simultaneously.
+    The \n#                         default is 60.\n\n#     --snap_retain_count The
+    maximum number of snapshots the ZooKeeper process \n#                         will
+    retain if purge_interval is greater than 0. The \n#                         default
+    is 3.\n\n#     --purge_interval    The number of hours the ZooKeeper process will
+    wait \n#                         between purging its old snapshots. If set to
+    0 old \n#                         snapshots will never be purged. The default
+    is 0.\n\n#     --max_session_timeout The maximum time in milliseconds for a client
+    session \n#                         timeout. The default value is 2 * tick time.\n\n#
+    \    --min_session_timeout The minimum time in milliseconds for a client session
+    \n#                         timeout. The default value is 20 * tick time.\n\n#
+    \    --log_level         The log level for the zookeeeper server. Either FATAL,\n#
+    \                        ERROR, WARN, INFO, DEBUG. The default is INFO.\n\n\nUSER=`whoami`\nHOST=`hostname
+    -s`\nDOMAIN=`hostname -d`\nLOG_LEVEL=INFO\nDATA_DIR=\"/var/lib/zookeeper/data\"\nDATA_LOG_DIR=\"/var/lib/zookeeper/log\"\nLOG_DIR=\"/logs\"\nCONF_DIR=\"/conf\"\nCLIENT_PORT=2181\nSERVER_PORT=2888\nELECTION_PORT=3888\nTICK_TIME=2000\nINIT_LIMIT=10\nSYNC_LIMIT=5\nHEAP=2G\nMAX_CLIENT_CNXNS=60\nSNAP_RETAIN_COUNT=3\nPURGE_INTERVAL=0\nSERVERS=1\n\nfunction
+    print_usage() {\necho \"\\\nUsage: start-zookeeper [OPTIONS]\nStarts a ZooKeeper
+    server based on the supplied options.\n    --servers           The number of servers
+    in the ensemble. The default \n                        value is 1.\n\n    --data_dir
+    \         The directory where the ZooKeeper process will store its\n                        snapshots.
+    The default is /var/lib/zookeeper/data.\n\n    --data_log_dir      The directory
+    where the ZooKeeper process will store its \n                        write ahead
+    log. The default is \n                        /var/lib/zookeeper/data/log.\n\n
+    \   --conf_dir          The directoyr where the ZooKeeper process will store its\n
+    \                       configuration. The default is /opt/zookeeper/conf.\n\n
+    \   --client_port       The port on which the ZooKeeper process will listen for
+    \n                        client requests. The default is 2181.\n\n    --election_port
+    \    The port on which the ZooKeeper process will perform \n                        leader
+    election. The default is 3888.\n\n    --server_port       The port on which the
+    ZooKeeper process will listen for \n                        requests from other
+    servers in the ensemble. The \n                        default is 2888. \n\n    --tick_time
+    \        The length of a ZooKeeper tick in ms. The default is \n                        2000.\n\n
+    \   --init_limit        The number of Ticks that an ensemble member is allowed
+    \n                        to perform leader election. The default is 10.\n\n    --sync_limit
+    \       The maximum session timeout that the ensemble will \n                        allows
+    a client to request. The default is 5.\n\n    --heap              The maximum
+    amount of heap to use. The format is the \n                        same as that
+    used for the Xmx and Xms parameters to the \n                        JVM. e.g.
+    --heap=2G. The default is 2G.\n\n    --max_client_cnxns  The maximum number of
+    client connections that the \n                        ZooKeeper process will accept
+    simultaneously. The \n                        default is 60.\n\n    --snap_retain_count
+    The maximum number of snapshots the ZooKeeper process \n                        will
+    retain if purge_interval is greater than 0. The \n                        default
+    is 3.\n\n    --purge_interval    The number of hours the ZooKeeper process will
+    wait \n                        between purging its old snapshots. If set to 0
+    old \n                        snapshots will never be purged. The default is 0.\n\n
+    \   --max_session_timeout The maximum time in milliseconds for a client session
+    \n                        timeout. The default value is 2 * tick time.\n\n    --min_session_timeout
+    The minimum time in milliseconds for a client session \n                        timeout.
+    The default value is 20 * tick time.\n\n    --log_level         The log level
+    for the zookeeeper server. Either FATAL,\n                        ERROR, WARN,
+    INFO, DEBUG. The default is INFO.\n\"\n}\n\nfunction create_data_dirs() {\n    if
+    [ ! -d $DATA_DIR  ]; then\n        mkdir -p $DATA_DIR\n        chown -R $USER:$USER
+    $DATA_DIR\n    fi\n\n    if [ ! -d $DATA_LOG_DIR  ]; then\n        mkdir -p $DATA_LOG_DIR\n
+    \       chown -R $USER:USER $DATA_LOG_DIR\n    fi\n\n    if [ ! -d $LOG_DIR  ];
+    then\n        mkdir -p $LOG_DIR\n        chown -R $USER:$USER $LOG_DIR\n    fi\n
+    \   if [ ! -f $ID_FILE ] && [ $SERVERS -gt 1 ]; then\n        echo $MY_ID >> $ID_FILE\n
+    \   fi\n}\n\nfunction print_servers() {\n    for (( i=1; i<=$SERVERS; i++ ))\n
+    \   do\n        echo \"server.$i=$NAME-$((i-1)).$DOMAIN:$SERVER_PORT:$ELECTION_PORT\"\n
+    \   done\n}\n\nfunction create_config() {\n    rm -f $CONFIG_FILE\n    echo \"\"
+    > $CONFIG_FILE\n    echo \"#This file was autogenerated DO NOT EDIT\" >> $CONFIG_FILE\n
+    \   echo \"clientPort=$CLIENT_PORT\" >> $CONFIG_FILE\n    echo \"dataDir=$DATA_DIR\"
+    >> $CONFIG_FILE\n    echo \"dataLogDir=$DATA_LOG_DIR\" >> $CONFIG_FILE\n    echo
+    \"tickTime=$TICK_TIME\" >> $CONFIG_FILE\n    echo \"initLimit=$INIT_LIMIT\" >>
+    $CONFIG_FILE\n    echo \"syncLimit=$SYNC_LIMIT\" >> $CONFIG_FILE\n    echo \"maxClientCnxns=$MAX_CLIENT_CNXNS\"
+    >> $CONFIG_FILE\n    echo \"minSessionTimeout=$MIN_SESSION_TIMEOUT\" >> $CONFIG_FILE\n
+    \   echo \"maxSessionTimeout=$MAX_SESSION_TIMEOUT\" >> $CONFIG_FILE\n    echo
+    \"autopurge.snapRetainCount=$SNAP_RETAIN_COUNT\" >> $CONFIG_FILE\n    echo \"autopurge.purgeInteval=$PURGE_INTERVAL\"
+    >> $CONFIG_FILE\n    echo \"4lw.commands.whitelist=stat, ruok, conf, isro\" >>
+    $CONFIG_FILE\n     if [ $SERVERS -gt 1 ]; then\n        print_servers >> $CONFIG_FILE\n
+    \   fi\n    cat $CONFIG_FILE >&2\n}\n\nfunction create_jvm_props() {\n    rm -f
+    $JAVA_ENV_FILE\n    echo \"\" $JAVA_ENV_FILE\n    echo \"ZOO_LOG_DIR=$LOG_DIR\"
+    >> $JAVA_ENV_FILE\n    echo \"JVMFLAGS=\\\"-Xmx$HEAP -Xms$HEAP\\\"\" >> $JAVA_ENV_FILE\n}\n\nfunction
+    create_log_props() {\n    rm -f $LOGGER_PROPS_FILE\n    echo \"\" $LOGGER_PROPS_FILE\n
+    \   echo \"Creating ZooKeeper log4j configuration\"\n    echo \"zookeeper.root.logger=CONSOLE\"
+    >> $LOGGER_PROPS_FILE\n    echo \"zookeeper.console.threshold=\"$LOG_LEVEL >>
+    $LOGGER_PROPS_FILE\n    echo \"log4j.rootLogger=\\${zookeeper.root.logger}\" >>
+    $LOGGER_PROPS_FILE\n    echo \"log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender\"
+    >> $LOGGER_PROPS_FILE\n    echo \"log4j.appender.CONSOLE.Threshold=\\${zookeeper.console.threshold}\"
+    >> $LOGGER_PROPS_FILE\n    echo \"log4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout\"
+    >> $LOGGER_PROPS_FILE\n    echo \"log4j.appender.CONSOLE.layout.ConversionPattern=%d{ISO8601}
+    [myid:%X{myid}] - %-5p [%t:%C{1}@%L] - %m%n\" >> $LOGGER_PROPS_FILE\n}\n\noptspec=\":hv-:\"\nwhile
+    getopts \"$optspec\" optchar; do\n\n    case \"${optchar}\" in\n        -)\n            case
+    \"${OPTARG}\" in\n                servers=*)\n                    SERVERS=${OPTARG##*=}\n
+    \                   ;;\n                data_dir=*)\n                    DATA_DIR=${OPTARG##*=}\n
+    \                   ;;\n                data_log_dir=*)\n                    DATA_LOG_DIR=${OPTARG##*=}\n
+    \                   ;;\n                log_dir=*)\n                    LOG_DIR=${OPTARG##*=}\n
+    \                   ;;\n                conf_dir=*)\n                    CONF_DIR=${OPTARG##*=}\n
+    \                   ;;\n                client_port=*)\n                    CLIENT_PORT=${OPTARG##*=}\n
+    \                   ;;\n                election_port=*)\n                    ELECTION_PORT=${OPTARG##*=}\n
+    \                   ;;\n                server_port=*)\n                    SERVER_PORT=${OPTARG##*=}\n
+    \                   ;;\n                tick_time=*)\n                    TICK_TIME=${OPTARG##*=}\n
+    \                   ;;\n                init_limit=*)\n                    INIT_LIMIT=${OPTARG##*=}\n
+    \                   ;;\n                sync_limit=*)\n                    SYNC_LIMIT=${OPTARG##*=}\n
+    \                   ;;\n                heap=*)\n                    HEAP=${OPTARG##*=}\n
+    \                   ;;\n                max_client_cnxns=*)\n                    MAX_CLIENT_CNXNS=${OPTARG##*=}\n
+    \                   ;;\n                snap_retain_count=*)\n                    SNAP_RETAIN_COUNT=${OPTARG##*=}\n
+    \                   ;;\n                purge_interval=*)\n                    PURGE_INTERVAL=${OPTARG##*=}\n
+    \                   ;;\n                max_session_timeout=*)\n                    MAX_SESSION_TIMEOUT=${OPTARG##*=}\n
+    \                   ;;\n                min_session_timeout=*)\n                    MIN_SESSION_TIMEOUT=${OPTARG##*=}\n
+    \                   ;;\n                log_level=*)\n                    LOG_LEVEL=${OPTARG##*=}\n
+    \                   ;;\n                *)\n                    echo \"Unknown
+    option --${OPTARG}\" >&2\n                    exit 1\n                    ;;\n
+    \           esac;;\n        h)\n            print_usage\n            exit\n            ;;\n
+    \       v)\n            echo \"Parsing option: '-${optchar}'\" >&2\n            ;;\n
+    \       *)\n            if [ \"$OPTERR\" != 1 ] || [ \"${optspec:0:1}\" = \":\"
+    ]; then\n                echo \"Non-option argument: '-${OPTARG}'\" >&2\n            fi\n
+    \           ;;\n    esac\ndone\n\nMIN_SESSION_TIMEOUT=${MIN_SESSION_TIMEOUT:-
+    $((TICK_TIME*2))}\nMAX_SESSION_TIMEOUT=${MAX_SESSION_TIMEOUT:- $((TICK_TIME*20))}\nID_FILE=\"$DATA_DIR/myid\"\nCONFIG_FILE=\"$CONF_DIR/zoo.cfg\"\nLOGGER_PROPS_FILE=\"$CONF_DIR/log4j.properties\"\nJAVA_ENV_FILE=\"$CONF_DIR/java.env\"\nif
+    [[ $HOST =~ (.*)-([0-9]+)$ ]]; then\n    NAME=${BASH_REMATCH[1]}\n    ORD=${BASH_REMATCH[2]}\nelse\n
+    \   echo \"Fialed to parse name and ordinal of Pod\"\n    exit 1\nfi\n\nMY_ID=$((ORD+1))\n\ncreate_config
+    && create_jvm_props && create_log_props && create_data_dirs && exec zkServer.sh
+    start-foreground"
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: start-zookeeper

@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  configData: "#!/usr/bin/env bash\n\nOK=$(echo ruok | nc 127.0.0.1 $1)\nif [ \"$OK\"
+    == \"imok\" ]; then\n\texit 0\nelse\n\texit 1\nfi"
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: zookeeper-ready
