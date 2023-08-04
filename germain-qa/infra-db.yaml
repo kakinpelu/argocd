@@ -5,4 +5,4 @@ metadata:
   name: "germainapm-db"
 spec:
   type: ExternalName
-  externalName: germain-db.cjkefqe8txhq.us-west-2.rds.amazonaws.com
+  externalName: germain-db.cw3ye9bzpgeu.us-west-2.rds.amazonaws.com
