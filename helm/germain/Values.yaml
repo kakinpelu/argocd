@@ -1,0 +1,116 @@
+germainDbHostname: "germain-db.c3uufeljmvc5.us-west-2.rds.amazonaws.com"
+elasticSearchVersion: "8.8.1"
+
+image:
+  elasticSearch: "elasticsearch:8.8.1"
+  kibana: "kibana:8.8.1"
+  activeMQ: "rmohr/activemq:latest"
+  zookeeper: "zookeeper:latest"
+  hazelcast: "hazelcast/hazelcast:5.2.2-SNAPSHOT"
+  germainServer: "public.ecr.aws/h0m9e4y5/germainapm-server:2023.3"
+  germainServices: "public.ecr.aws/h0m9e4y5/germainapm-services:2023.3"
+  pullPolicy: Always
+
+replicas:
+  elasticSearch: 2
+  kibana: 1
+  activeMQ: 1
+  zookeeper: 2
+  hazelcast: 1
+  germainServer: 2
+  germainStorage: 1
+  germainRtm: 0
+  germainSession: 1
+  germainAnalytics: 1
+  germainAggregation: 1
+  germainAction: 1
+
+resources:
+  requests:
+    cpu:
+      elasticSearch: 100m
+      kibana: 100m
+      activeMQ: 100m
+      zookeeper: 100m
+      hazelcast: 100m
+      germainServer: 100m
+      germainStorage: 100m
+      germainRtm: 100m
+      germainSession: 100m
+      germainAnalytics: 100m
+      germainAggregation: 100m
+      germainAction: 100m
+    memory:
+      elasticSearch: 1024Mi
+      kibana: 512Mi
+      activeMQ: 256Mi
+      zookeeper: 256Mi
+      hazelcast: 512Mi
+      germainServer: 1024Mi
+      germainStorage: 1024Mi
+      germainRtm: 512Mi
+      germainSession: 512Mi
+      germainAnalytics: 512Mi
+      germainAggregation: 512Mi
+      germainAction: 512Mi
+  limits:
+    cpu:
+      elasticSearch: 1000m
+      kibana: 1000m
+      activeMQ: 1000m
+      zookeeper: 1000m
+      hazelcast: 1000m
+      germainServer: 1000m
+      germainStorage: 1000m
+      germainRtm: 1000m
+      germainSession: 1000m
+      germainAnalytics: 1000m
+      germainAggregation: 1000m
+      germainAction: 1000m
+    memory:
+      elasticSearch: 4096Mi
+      kibana: 2048Mi
+      activeMQ: 1024Mi
+      zookeeper: 1024Mi
+      hazelcast: 2048Mi
+      germainServer: 4096Mi
+      germainStorage: 4096Mi
+      germainRtm: 2048Mi
+      germainSession: 2048Mi
+      germainAnalytics: 2048Mi
+      germainAggregation: 2048Mi
+      germainAction: 2048Mi
+
+persistentVolumeClaim:
+  elasticSearch: 10Gi
+  zookeeper: 1Gi
+
+storageClass:
+  fstype: "ext4"
+  type: "gp3"
+  iops: "3000"
+
+minReadySeconds: 10
+
+livenessProbe:
+  initialDelaySeconds: 300
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 10
+
+readinessProbe:
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+storageServiceCheck: while [[ \"$(wget --server-response http://germainapm-storage:8080/actuator/prometheus 2>&1 | awk '/^  HTTP/{print $2}')\" != \"200\" ]]; do sleep 10; done
+
+activeMQXml: "config/activemq.xml"
+activeMQEnv: "config/activemq.env"
+startZookeeper: "config/start-zookeeper"
+zookeeperReady: "config/zookeeper-ready"
+commonProperties: "config/common.properties"
+licenseFolder: "config/license/*"
