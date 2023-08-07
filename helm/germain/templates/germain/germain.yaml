@@ -159,7 +159,10 @@ spec:
         args: [
           "/bin/sh",
           "-c",
-          "{{ .Values.zookeeperServiceCheck }}"
+          "{{ .Values.zookeeperServiceCheck }}",
+          "{{ .Values.dbServiceCheck }}",
+          "{{ .Values.elasticServiceCheck }}",
+          "{{ .Values.activemqServiceCheck }}"
         ]
         securityContext:
           privileged: true

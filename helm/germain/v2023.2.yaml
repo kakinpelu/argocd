@@ -107,6 +107,13 @@ readinessProbe:
   failureThreshold: 3
 
 zookeeperServiceCheck: while [[ \"$(echo ruok | nc germainapm-zookeeper 2181; echo)\" != \"imok\" ]]; do sleep 5; done;
+
+activemqServiceCheck: while [[ \"$(wget --server-response http://germainapm-activemq:8161 2>&1 | awk '/^  HTTP/{print $2}')\" != \"200\" ]]; do sleep 10; done;
+
+elasticServiceCheck: while [[ \"$(wget --server-response http://germainapm-elasticsearch:9200 2>&1 | awk '/^  HTTP/{print $2}')\" != \"200\" ]]; do sleep 10; done;
+
+dbServiceCheck: while [[ \"$(nc -z -v -w3 http://germainapm-db 3306 | grep -o open 2>&1)\" != \"open\" ]]; do sleep 10; done;
+
 storageServiceCheck: while [[ \"$(wget --server-response http://germainapm-storage:8080/actuator/prometheus 2>&1 | awk '/^  HTTP/{print $2}')\" != \"200\" ]]; do sleep 10; done;
 
 activeMQXml: "config/activemq.xml"
