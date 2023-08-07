@@ -106,8 +106,8 @@ readinessProbe:
   successThreshold: 1
   failureThreshold: 3
 
-zookeeperServiceCheck: while [[ \"$(echo ruok | nc germainapm-zookeeper 2181; echo)\" != \"imok\" ]]; do sleep 5; done
-storageServiceCheck: while [[ \"$(wget --server-response http://germainapm-storage:8080/actuator/prometheus 2>&1 | awk '/^  HTTP/{print $2}')\" != \"200\" ]]; do sleep 10; done
+zookeeperServiceCheck: while [[ \"$(echo ruok | nc germainapm-zookeeper 2181; echo)\" != \"imok\" ]]; do sleep 5; done;
+storageServiceCheck: while [[ \"$(wget --server-response http://germainapm-storage:8080/actuator/prometheus 2>&1 | awk '/^  HTTP/{print $2}')\" != \"200\" ]]; do sleep 10; done;
 
 activeMQXml: "config/activemq.xml"
 activeMQEnv: "config/activemq.env"
