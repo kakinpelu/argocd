@@ -1,6 +1,4 @@
-germainEnvName: "germain-demo"
 germainDbHostname: "germain-db.c3uufeljmvc5.us-west-2.rds.amazonaws.com"
-
 elasticSearchVersion: "8.8.1"
 
 image:
@@ -9,8 +7,8 @@ image:
   activeMQ: "rmohr/activemq:latest"
   zookeeper: "zookeeper:latest"
   hazelcast: "hazelcast/hazelcast:5.2.2-SNAPSHOT"
-  germainServer: "public.ecr.aws/h0m9e4y5/germainapm-server:2022.5"
-  germainServices: "public.ecr.aws/h0m9e4y5/germainapm-services:2022.5"
+  germainServer: "public.ecr.aws/h0m9e4y5/germainapm-server:2023.2"
+  germainServices: "public.ecr.aws/h0m9e4y5/germainapm-services:2023.2"
   pullPolicy: Always
 
 replicas:
@@ -21,7 +19,7 @@ replicas:
   hazelcast: 1
   germainServer: 2
   germainStorage: 1
-  germainRtm: 1
+  germainRtm: 0
   germainSession: 1
   germainAnalytics: 1
   germainAggregation: 1
@@ -92,6 +90,8 @@ storageClass:
   type: "gp3"
   iops: "3000"
 
+minReadySeconds: 10
+
 livenessProbe:
   initialDelaySeconds: 300
   periodSeconds: 10
@@ -105,8 +105,6 @@ readinessProbe:
   timeoutSeconds: 5
   successThreshold: 1
   failureThreshold: 3
-
-minReadySeconds: 10
 
 storageServiceCheck: while [[ \"$(wget --server-response http://germainapm-storage:8080/actuator/prometheus 2>&1 | awk '/^  HTTP/{print $2}')\" != \"200\" ]]; do sleep 10; done
 
