@@ -22,6 +22,8 @@ metadata:
   name: elastic
 spec:
   replicas: {{ .Values.replicas.elasticSearch }}
+  updateStrategy:
+    type: RollingUpdate
   volumeClaimTemplates:
   - metadata:
       name: esdata
