@@ -1,5 +1,5 @@
 germainEnvName: "germain-demo"
-germainDbHostname: ""
+germainDbHostname: "germain-db.c3uufeljmvc5.us-west-2.rds.amazonaws.com"
 
 elasticSearchVersion: "8.8.1"
 
