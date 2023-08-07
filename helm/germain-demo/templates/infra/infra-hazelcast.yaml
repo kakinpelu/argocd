@@ -12,7 +12,7 @@ spec:
       port: 5701
       protocol: TCP
       targetPort: hazelcast-port
-
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
