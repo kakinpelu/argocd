@@ -1,4 +1,6 @@
 ---
+{{- required "Database hostname is required." .Values.germainDbHostname -}}
+
 apiVersion: v1
 kind: Service
 metadata:
