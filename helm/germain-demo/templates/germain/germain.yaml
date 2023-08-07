@@ -22,7 +22,7 @@ spec:
           hostPath:
             path: /opt/var/logs
       containers:
-        - image: {{ .Values.image.germainServices }}
+        - image: {{ .Values.image.germainServer }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: germain-server
           resources:
