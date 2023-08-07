@@ -64,7 +64,7 @@ spec:
             successThreshold: {{ .Values.readinessProbe.successThreshold }}
             failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
       initContainers:
-      - name: wait-for-storage
+      - name: prerequisite-check
         image: busybox
         args: [
           "/bin/sh",
@@ -153,6 +153,16 @@ spec:
             timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
             successThreshold: {{ .Values.readinessProbe.successThreshold }}
             failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+      initContainers:
+      - name: prerequisite-check
+        image: busybox
+        args: [
+          "/bin/sh",
+          "-c",
+          "{{ .Values.zookeeperServiceCheck }}"
+        ]
+        securityContext:
+          privileged: true
 
 # RTM
 ---
