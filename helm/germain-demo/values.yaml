@@ -107,7 +107,7 @@ readinessProbe:
   failureThreshold: 3
 
 minReadySeconds: 10
-imagePullSecrets: ""
+imagePullSecrets: "pullSecret"
 
 storageServiceCheck: while [[ \"$(wget --server-response http://germainapm-storage:8080/actuator/prometheus 2>&1 | awk '/^  HTTP/{print $2}')\" != \"200\" ]]; do sleep 10; done
 
