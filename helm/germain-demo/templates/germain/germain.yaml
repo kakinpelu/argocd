@@ -21,8 +21,6 @@ spec:
         - name: var-logs
           hostPath:
             path: /opt/var/logs
-      imagePullSecrets:
-        - name: {{ .Values.imagePullSecrets }}
       containers:
         - image: {{ .Values.image.germainServices }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -105,8 +103,6 @@ spec:
         - name: license
           configMap:
             name: license-folder
-      imagePullSecrets:
-        - name: {{ .Values.imagePullSecrets }}
       containers:
         - image: {{ .Values.image.germainServices }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -180,8 +176,6 @@ spec:
         - name: var-logs
           hostPath:
             path: /opt/var
-      imagePullSecrets:
-        - name: {{ .Values.imagePullSecrets }}
       containers:
         - image: {{ .Values.image.germainServices }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -262,8 +256,6 @@ spec:
         - name: var-logs
           hostPath:
             path: /opt/var
-      imagePullSecrets:
-        - name: {{ .Values.imagePullSecrets }}
       containers:
         - image: {{ .Values.image.germainServices }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -342,8 +334,6 @@ spec:
         - name: var-logs
           hostPath:
             path: /opt/var
-      imagePullSecrets:
-        - name: {{ .Values.imagePullSecrets }}
       containers:
         - image: {{ .Values.image.germainServices }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -424,8 +414,6 @@ spec:
         - name: var-logs
           hostPath:
             path: /opt/var
-      imagePullSecrets:
-        - name: {{ .Values.imagePullSecrets }}
       containers:
         - image: {{ .Values.image.germainServices }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -506,8 +494,6 @@ spec:
         - name: var-logs
           hostPath:
             path: /opt/var
-      imagePullSecrets:
-        - name: {{ .Values.imagePullSecrets }}
       containers:
         - image: {{ .Values.image.germainServices }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
