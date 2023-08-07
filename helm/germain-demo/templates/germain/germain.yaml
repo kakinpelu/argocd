@@ -75,6 +75,7 @@ spec:
           privileged: true
 
 # STORAGE
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -154,6 +155,7 @@ spec:
             failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
 
 # RTM
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -234,6 +236,7 @@ spec:
           privileged: true
 
 # SESSION
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -312,6 +315,7 @@ spec:
           privileged: true
 
 # ANALYTICS
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -392,6 +396,7 @@ spec:
           privileged: true
 
 # AGGREGATION
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -472,6 +477,7 @@ spec:
           privileged: true
 
 # ACTION
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
