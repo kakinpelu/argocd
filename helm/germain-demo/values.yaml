@@ -8,7 +8,7 @@ image:
   kibana: "kibana:8.8.1"
   activeMQ: "rmohr/activemq:latest"
   zookeeper: "zookeeper:latest"
-  hazelcast: "hazelcast:5.2.2-SNAPSHOT"
+  hazelcast: "hazelcast/hazelcast:5.2.2-SNAPSHOT"
   germainServer: "public.ecr.aws/h0m9e4y5/germainapm-server:2022.5"
   germainServices: "public.ecr.aws/h0m9e4y5/germainapm-services:2022.5"
   pullPolicy: Always
