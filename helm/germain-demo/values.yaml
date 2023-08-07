@@ -4,7 +4,7 @@ germainDbHostname: "germain-db.c3uufeljmvc5.us-west-2.rds.amazonaws.com"
 elasticSearchVersion: "8.8.1"
 
 image:
-  elasticSearch: "elastic:8.8.1"
+  elasticSearch: "elasticsearch:8.8.1"
   kibana: "kibana:8.8.1"
   activeMQ: "rmohr/activemq:latest"
   zookeeper: "zookeeper:latest"
