@@ -1,0 +1,564 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: germainapm-server
+spec:
+  replicas: {{ .Values.replicas.germainServer }}
+  minReadySeconds: {{ .Values.minReadySeconds }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      service-type: server
+  template:
+    metadata:
+      labels:
+        service-type: server
+    spec:
+      hostname: germainapm-server
+      volumes:
+        - name: var-logs
+          hostPath:
+            path: /opt/var/logs
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecrets }}
+      containers:
+        - image: {{ .Values.image.germainServices }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: germain-server
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory.germainServer }}
+              cpu: {{ .Values.resources.requests.cpu.germainServer }}
+            limits:
+              memory: {{ .Values.resources.limits.memory.germainServer }}
+              cpu: {{ .Values.resources.limits.cpu.germainServer }}
+          ports:
+            - containerPort: 8080
+              name: container-port
+          env:
+            - name: GERMAIN_ENV
+              value: "germain"
+            - name: ZK_URL
+              value: "germainapm-zookeeper:2181"
+            - name: ELASTIC_URL
+              value: "true"
+          volumeMounts:
+            - name: var-logs
+              mountPath: /opt/tomcat8/logs
+          livenessProbe:
+            httpGet:
+              path: /actuator/prometheus
+              port: container-port
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/prometheus
+              port: container-port
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+      initContainers:
+      - name: wait-for-storage
+        image: busybox
+        args: [
+          "/bin/sh",
+          "-c",
+          "{{ .Values.storageServiceCheck }}"
+        ]
+        securityContext:
+          privileged: true
+
+# STORAGE
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: germainapm-storage
+spec:
+  replicas: {{ .Values.replicas.germainStorage }}
+  minReadySeconds: {{ .Values.minReadySeconds }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      service-type: storage
+  template:
+    metadata:
+      labels:
+        service-type: storage
+    spec:
+      hostname: germainapm-storage
+      volumes:
+        - name: var-logs
+          hostPath:
+            path: /opt/var
+        - name: common-properties
+          configMap:
+            name: common-properties
+        - name: license
+          configMap:
+            name: license-folder
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecrets }}
+      containers:
+        - image: {{ .Values.image.germainServices }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: germainapm-storage
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory.germainStorage }}
+              cpu: {{ .Values.resources.requests.cpu.germainStorage }}
+            limits:
+              memory: {{ .Values.resources.limits.memory.germainStorage }}
+              cpu: {{ .Values.resources.limits.cpu.germainStorage }}
+          ports:
+            - containerPort: 8080
+              name: container-port
+          env:
+            - name: GERMAIN_ENV
+              value: "germain"
+            - name: ZK_URL
+              value: "germainapm-zookeeper:2181"
+            - name: ELASTIC_URL
+              value: "true"
+            - name: SERVICE_NAME
+              value: "storage"
+          volumeMounts:
+            - name: var-logs
+              mountPath: /opt/services/var
+            - name: common-properties
+              mountPath: /opt/services/config/common.properties
+              subPath: configData
+            - name: license
+              mountPath: /opt/services/install/configuration/custom/
+          livenessProbe:
+            httpGet:
+              path: /actuator/prometheus
+              port: container-port
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/prometheus
+              port: container-port
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+
+# RTM
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: germainapm-rtm
+spec:
+  replicas: {{ .Values.replicas.germainRtm }}
+  minReadySeconds: {{ .Values.minReadySeconds }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      service-type: rtm
+  template:
+    metadata:
+      labels:
+        service-type: rtm
+    spec:
+      hostname: germainapm-rtm
+      volumes:
+        - name: var-logs
+          hostPath:
+            path: /opt/var
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecrets }}
+      containers:
+        - image: {{ .Values.image.germainServices }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: germainapm-rtm
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory.germainRtm }}
+              cpu: {{ .Values.resources.requests.cpu.germainRtm }}
+            limits:
+              memory: {{ .Values.resources.limits.memory.germainRtm }}
+              cpu: {{ .Values.resources.limits.cpu.germainRtm }}
+          ports:
+          - containerPort: 8096
+            name: container-port
+          env:
+            - name: GERMAIN_ENV
+              value: "germain"
+            - name: ZK_URL
+              value: "germainapm-zookeeper:2181"
+            - name: ELASTIC_URL
+              value: "true"
+            - name: SERVICE_NAME
+              value: "rtm"
+            - name: SERVICE_PORT
+              value: "8096"
+          volumeMounts:
+            - name: var-logs
+              mountPath: /opt/services/var
+          livenessProbe:
+            httpGet:
+              path: /actuator/prometheus
+              port: container-port
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/prometheus
+              port: container-port
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+      initContainers:
+      - name: wait-for-storage
+        image: busybox
+        args: [
+          "/bin/sh",
+          "-c",
+          "{{ .Values.storageServiceCheck }}"
+        ]
+        securityContext:
+          privileged: true
+
+# SESSION
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: germainapm-session
+spec:
+  replicas: {{ .Values.replicas.germainSession }}
+  minReadySeconds: {{ .Values.minReadySeconds }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      service-type: session
+  template:
+    metadata:
+      labels:
+        service-type: session
+    spec:
+      hostname: germainapm-session
+      volumes:
+        - name: var-logs
+          hostPath:
+            path: /opt/var
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecrets }}
+      containers:
+        - image: {{ .Values.image.germainServices }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: germainapm-storage
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory.germainSession }}
+              cpu: {{ .Values.resources.requests.cpu.germainSession }}
+            limits:
+              memory: {{ .Values.resources.limits.memory.germainSession }}
+              cpu: {{ .Values.resources.limits.cpu.germainSession }}
+          ports:
+            - containerPort: 8080
+              name: container-port
+          env:
+            - name: GERMAIN_ENV
+              value: "germain"
+            - name: ZK_URL
+              value: "germainapm-zookeeper:2181"
+            - name: ELASTIC_URL
+              value: "true"
+            - name: SERVICE_NAME
+              value: "session"
+          volumeMounts:
+            - name: var-logs
+              mountPath: /opt/services/var
+          livenessProbe:
+            httpGet:
+              path: /actuator/prometheus
+              port: container-port
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/prometheus
+              port: container-port
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+      initContainers:
+      - name: wait-for-storage
+        image: busybox
+        args: [
+          "/bin/sh",
+          "-c",
+          "{{ .Values.storageServiceCheck }}"
+        ]
+        securityContext:
+          privileged: true
+
+# ANALYTICS
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: germainapm-analytics
+spec:
+  replicas: {{ .Values.replicas.germainAnalytics }}
+  minReadySeconds: {{ .Values.minReadySeconds }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      service-type: analytics
+  template:
+    metadata:
+      labels:
+        service-type: analytics
+    spec:
+      hostname: germainapm-analytics
+      volumes:
+        - name: var-logs
+          hostPath:
+            path: /opt/var
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecrets }}
+      containers:
+        - image: {{ .Values.image.germainServices }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: germainapm-analytics
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory.germainAnalytics }}
+              cpu: {{ .Values.resources.requests.cpu.germainAnalytics }}
+            limits:
+              memory: {{ .Values.resources.limits.memory.germainAnalytics }}
+              cpu: {{ .Values.resources.limits.cpu.germainAnalytics }}
+          ports:
+          - containerPort: 8094
+            name: container-port
+          env:
+            - name: GERMAIN_ENV
+              value: "germain"
+            - name: ZK_URL
+              value: "germainapm-zookeeper:2181"
+            - name: ELASTIC_URL
+              value: "true"
+            - name: SERVICE_NAME
+              value: "analytics"
+            - name: SERVICE_PORT
+              value: "8094"
+          volumeMounts:
+            - name: var-logs
+              mountPath: /opt/services/var
+          livenessProbe:
+            httpGet:
+              path: /actuator/prometheus
+              port: container-port
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/prometheus
+              port: container-port
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+      initContainers:
+      - name: wait-for-storage
+        image: busybox
+        args: [
+          "/bin/sh",
+          "-c",
+          "{{ .Values.storageServiceCheck }}"
+        ]
+        securityContext:
+          privileged: true
+
+# AGGREGATION
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: germainapm-aggregation
+spec:
+  replicas: {{ .Values.replicas.germainAggregation }}
+  minReadySeconds: {{ .Values.minReadySeconds }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      service-type: aggregation
+  template:
+    metadata:
+      labels:
+        service-type: aggregation
+    spec:
+      hostname: germainapm-aggregation
+      volumes:
+        - name: var-logs
+          hostPath:
+            path: /opt/var
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecrets }}
+      containers:
+        - image: {{ .Values.image.germainServices }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: germainapm-aggregation
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory.germainAggregation }}
+              cpu: {{ .Values.resources.requests.cpu.germainAggregation }}
+            limits:
+              memory: {{ .Values.resources.limits.memory.germainAggregation }}
+              cpu: {{ .Values.resources.limits.cpu.germainAggregation }}
+          ports:
+          - containerPort: 8092
+            name: container-port
+          env:
+            - name: GERMAIN_ENV
+              value: "germain"
+            - name: ZK_URL
+              value: "germainapm-zookeeper:2181"
+            - name: ELASTIC_URL
+              value: "true"
+            - name: SERVICE_NAME
+              value: "aggregation"
+            - name: SERVICE_PORT
+              value: "8092"
+          volumeMounts:
+            - name: var-logs
+              mountPath: /opt/services/var
+          livenessProbe:
+            httpGet:
+              path: /actuator/prometheus
+              port: container-port
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/prometheus
+              port: container-port
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+      initContainers:
+      - name: wait-for-storage
+        image: busybox
+        args: [
+          "/bin/sh",
+          "-c",
+          "{{ .Values.storageServiceCheck }}"
+        ]
+        securityContext:
+          privileged: true
+
+# ACTION
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: germainapm-action
+spec:
+  replicas: {{ .Values.replicas.germainAction }}
+  minReadySeconds: {{ .Values.minReadySeconds }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      service-type: action
+  template:
+    metadata:
+      labels:
+        service-type: action
+    spec:
+      hostname: germainapm-action
+      volumes:
+        - name: var-logs
+          hostPath:
+            path: /opt/var
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecrets }}
+      containers:
+        - image: {{ .Values.image.germainServices }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: germainapm-action
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory.germainAction }}
+              cpu: {{ .Values.resources.requests.cpu.germainAction }}
+            limits:
+              memory: {{ .Values.resources.limits.memory.germainAction }}
+              cpu: {{ .Values.resources.limits.cpu.germainAction }}
+          ports:
+            - containerPort: 8080
+              name: container-port
+          env:
+            - name: GERMAIN_ENV
+              value: "germain"
+            - name: ZK_URL
+              value: "germainapm-zookeeper:2181"
+            - name: ELASTIC_URL
+              value: "true"
+            - name: SERVICE_NAME
+              value: "action"
+          volumeMounts:
+            - name: var-logs
+              mountPath: /opt/services/var
+          livenessProbe:
+            httpGet:
+              path: /actuator/prometheus
+              port: container-port
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/prometheus
+              port: container-port
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+      initContainers:
+      - name: wait-for-storage
+        image: busybox
+        args: [
+          "/bin/sh",
+          "-c",
+          "{{ .Values.storageServiceCheck }}"
+        ]
+        securityContext:
+          privileged: true
