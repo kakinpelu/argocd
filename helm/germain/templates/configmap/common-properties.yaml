@@ -4,4 +4,4 @@ metadata:
   name: common-properties
 data:
   configData: |-
-{{ .Files.Get .Values.commonProperties | indent 4 }}
+{{ tpl (.Files.Get .Values.commonProperties) . | indent 4 }}

@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: germainapm-activemq
+  name: {{ .Values.spec.activeMQ.serviceName }}
 spec:
   clusterIP: None
   selector:
@@ -40,7 +40,7 @@ kind: Deployment
 metadata:
   name: activemq
 spec:
-  replicas: {{ .Values.replicas.activeMQ }}
+  replicas: {{ .Values.spec.activeMQ.replicas }}
   selector:
     matchLabels:
       app: activemq
@@ -57,16 +57,16 @@ spec:
           configMap:
             name: activemq-env
       containers:
-        - image: {{ .Values.image.activeMQ }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - image: "{{ .Values.spec.activeMQ.name }}:{{ .Values.spec.activeMQ.pullPolicy }}"
+          imagePullPolicy: {{ .Values.spec.activeMQ.pullPolicy }}
           name: activemq
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory.activeMQ }}
-              cpu: {{ .Values.resources.requests.cpu.activeMQ }}
+              memory: {{ .Values.spec.activeMQ.memoryRequest }}
+              cpu: {{ .Values.spec.activeMQ.cpuRequest }}
             limits:
-              memory: {{ .Values.resources.limits.memory.activeMQ }}
-              cpu: {{ .Values.resources.limits.cpu.activeMQ }}
+              memory: {{ .Values.spec.activeMQ.memoryLimit }}
+              cpu: {{ .Values.spec.activeMQ.cpuLimit }}
           ports:
             - containerPort: 8161
               name: activemq-port1

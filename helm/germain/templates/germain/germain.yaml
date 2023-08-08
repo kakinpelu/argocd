@@ -2,10 +2,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: germainapm-server
+  name: {{ .Values.spec.germainServer.serviceName }}
 spec:
-  replicas: {{ .Values.replicas.germainServer }}
-  minReadySeconds: {{ .Values.minReadySeconds }}
+  replicas: {{ .Values.spec.germainServer.replicas }}
+  minReadySeconds: {{ .Values.spec.germainServer.minReadySeconds }}
   strategy:
     type: Recreate
   selector:
@@ -22,16 +22,16 @@ spec:
           hostPath:
             path: /opt/var/logs
       containers:
-        - image: {{ .Values.image.germainServer }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - image: "{{ .Values.spec.germainServer.name }}:{{ .Values.spec.germainServer.tag }}"
+          imagePullPolicy: {{ .Values.spec.germainServer.pullPolicy }}
           name: germain-server
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory.germainServer }}
-              cpu: {{ .Values.resources.requests.cpu.germainServer }}
+              memory: {{ .Values.spec.germainServer.memoryRequest }}
+              cpu: {{ .Values.spec.germainServer.cpuRequest }}
             limits:
-              memory: {{ .Values.resources.limits.memory.germainServer }}
-              cpu: {{ .Values.resources.limits.cpu.germainServer }}
+              memory: {{ .Values.spec.germainServer.memoryLimit }}
+              cpu: {{ .Values.spec.germainServer.cpuLimit }}
           ports:
             - containerPort: 8080
               name: container-port
@@ -39,7 +39,7 @@ spec:
             - name: GERMAIN_ENV
               value: "germain"
             - name: ZK_URL
-              value: "germainapm-zookeeper:2181"
+              value: "{{ .Values.spec.zookeeper.serviceName }}:2181"
             - name: ELASTIC_URL
               value: "true"
           volumeMounts:
@@ -69,7 +69,7 @@ spec:
         args: [
           "/bin/sh",
           "-c",
-          "{{ .Values.storageServiceCheck }}"
+          "{{ .Values.ServiceCheck.storage }}"
         ]
         securityContext:
           privileged: true
@@ -79,10 +79,10 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: germainapm-storage
+  name: {{ .Values.spec.germainStorage.serviceName }}
 spec:
-  replicas: {{ .Values.replicas.germainStorage }}
-  minReadySeconds: {{ .Values.minReadySeconds }}
+  replicas: {{ .Values.spec.germainStorage.replicas }}
+  minReadySeconds: {{ .Values.spec.germainStorage.minReadySeconds }}
   strategy:
     type: Recreate
   selector:
@@ -105,16 +105,16 @@ spec:
           configMap:
             name: license-folder
       containers:
-        - image: {{ .Values.image.germainServices }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - image: "{{ .Values.spec.germainStorage.name }}:{{ .Values.spec.germainStorage.tag }}"
+          imagePullPolicy: {{ .Values.spec.germainStorage.pullPolicy }}
           name: germainapm-storage
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory.germainStorage }}
-              cpu: {{ .Values.resources.requests.cpu.germainStorage }}
+              memory: {{ .Values.spec.germainStorage.memoryRequest }}
+              cpu: {{ .Values.spec.germainStorage.cpuRequest }}
             limits:
-              memory: {{ .Values.resources.limits.memory.germainStorage }}
-              cpu: {{ .Values.resources.limits.cpu.germainStorage }}
+              memory: {{ .Values.spec.germainStorage.memoryLimit }}
+              cpu: {{ .Values.spec.germainStorage.cpuLimit }}
           ports:
             - containerPort: 8080
               name: container-port
@@ -122,7 +122,7 @@ spec:
             - name: GERMAIN_ENV
               value: "germain"
             - name: ZK_URL
-              value: "germainapm-zookeeper:2181"
+              value: "{{ .Values.spec.zookeeper.serviceName }}:2181"
             - name: ELASTIC_URL
               value: "true"
             - name: SERVICE_NAME
@@ -159,23 +159,24 @@ spec:
         args: [
           "/bin/sh",
           "-c",
-          "{{ .Values.zookeeperServiceCheck }}",
-          "{{ .Values.dbServiceCheck }}",
-          "{{ .Values.elasticServiceCheck }}",
-          "{{ .Values.activemqServiceCheck }}"
+          "{{ .Values.ServiceCheck.zookeeper }}",
+          "{{ .Values.ServiceCheck.db }}",
+          "{{ .Values.ServiceCheck.elastic }}",
+          "{{ .Values.ServiceCheck.activemq }}"
         ]
         securityContext:
           privileged: true
 
-# RTM
+{{if has (substr 0 6 .Values.spec.germainServer.tag) .Values.rtmVersions }}
+# RTM only for required versions
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: germainapm-rtm
+  name: {{ .Values.spec.germainRtm.serviceName }}
 spec:
-  replicas: {{ .Values.replicas.germainRtm }}
-  minReadySeconds: {{ .Values.minReadySeconds }}
+  replicas: {{ .Values.spec.germainRtm.replicas }}
+  minReadySeconds: {{ .Values.spec.germainRtm.minReadySeconds }}
   strategy:
     type: Recreate
   selector:
@@ -192,16 +193,16 @@ spec:
           hostPath:
             path: /opt/var
       containers:
-        - image: {{ .Values.image.germainServices }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - image: "{{ .Values.spec.germainRtm.name }}:{{ .Values.spec.germainRtm.tag }}"
+          imagePullPolicy: {{ .Values.spec.germainRtm.pullPolicy }}
           name: germainapm-rtm
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory.germainRtm }}
-              cpu: {{ .Values.resources.requests.cpu.germainRtm }}
+              memory: {{ .Values.spec.germainRtm.memoryRequest }}
+              cpu: {{ .Values.spec.germainRtm.cpuRequest }}
             limits:
-              memory: {{ .Values.resources.limits.memory.germainRtm }}
-              cpu: {{ .Values.resources.limits.cpu.germainRtm }}
+              memory: {{ .Values.spec.germainRtm.memoryLimit }}
+              cpu: {{ .Values.spec.germainRtm.cpuLimit }}
           ports:
           - containerPort: 8096
             name: container-port
@@ -209,7 +210,7 @@ spec:
             - name: GERMAIN_ENV
               value: "germain"
             - name: ZK_URL
-              value: "germainapm-zookeeper:2181"
+              value: "{{ .Values.spec.zookeeper.serviceName }}:2181"
             - name: ELASTIC_URL
               value: "true"
             - name: SERVICE_NAME
@@ -243,20 +244,21 @@ spec:
         args: [
           "/bin/sh",
           "-c",
-          "{{ .Values.storageServiceCheck }}"
+          "{{ .Values.ServiceCheck.storage }}"
         ]
         securityContext:
           privileged: true
+{{ end }}
 
 # SESSION
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: germainapm-session
+  name: {{ .Values.spec.germainSession.serviceName }}
 spec:
-  replicas: {{ .Values.replicas.germainSession }}
-  minReadySeconds: {{ .Values.minReadySeconds }}
+  replicas: {{ .Values.spec.germainSession.replicas }}
+  minReadySeconds: {{ .Values.spec.germainSession.minReadySeconds }}
   strategy:
     type: Recreate
   selector:
@@ -273,16 +275,16 @@ spec:
           hostPath:
             path: /opt/var
       containers:
-        - image: {{ .Values.image.germainServices }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - image: "{{ .Values.spec.germainSession.name }}:{{ .Values.spec.germainSession.tag }}"
+          imagePullPolicy: {{ .Values.spec.germainSession.pullPolicy }}
           name: germainapm-storage
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory.germainSession }}
-              cpu: {{ .Values.resources.requests.cpu.germainSession }}
+              memory: {{ .Values.spec.germainSession.memoryRequest }}
+              cpu: {{ .Values.spec.germainSession.cpuRequest }}
             limits:
-              memory: {{ .Values.resources.limits.memory.germainSession }}
-              cpu: {{ .Values.resources.limits.cpu.germainSession }}
+              memory: {{ .Values.spec.germainSession.memoryLimit }}
+              cpu: {{ .Values.spec.germainSession.cpuLimit }}
           ports:
             - containerPort: 8080
               name: container-port
@@ -290,7 +292,7 @@ spec:
             - name: GERMAIN_ENV
               value: "germain"
             - name: ZK_URL
-              value: "germainapm-zookeeper:2181"
+              value: "{{ .Values.spec.zookeeper.serviceName }}:2181"
             - name: ELASTIC_URL
               value: "true"
             - name: SERVICE_NAME
@@ -322,7 +324,7 @@ spec:
         args: [
           "/bin/sh",
           "-c",
-          "{{ .Values.storageServiceCheck }}"
+          "{{ .Values.ServiceCheck.storage }}"
         ]
         securityContext:
           privileged: true
@@ -332,10 +334,10 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: germainapm-analytics
+  name: {{ .Values.spec.germainAnalytics.serviceName }}
 spec:
-  replicas: {{ .Values.replicas.germainAnalytics }}
-  minReadySeconds: {{ .Values.minReadySeconds }}
+  replicas: {{ .Values.spec.germainAnalytics.replicas }}
+  minReadySeconds: {{ .Values.spec.germainAnalytics.minReadySeconds }}
   strategy:
     type: Recreate
   selector:
@@ -352,16 +354,16 @@ spec:
           hostPath:
             path: /opt/var
       containers:
-        - image: {{ .Values.image.germainServices }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - image: "{{ .Values.spec.germainAnalytics.name }}:{{ .Values.spec.germainAnalytics.tag }}"
+          imagePullPolicy: {{ .Values.spec.germainAnalytics.pullPolicy }}
           name: germainapm-analytics
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory.germainAnalytics }}
-              cpu: {{ .Values.resources.requests.cpu.germainAnalytics }}
+              memory: {{ .Values.spec.germainAnalytics.memoryRequest }}
+              cpu: {{ .Values.spec.germainAnalytics.cpuRequest }}
             limits:
-              memory: {{ .Values.resources.limits.memory.germainAnalytics }}
-              cpu: {{ .Values.resources.limits.cpu.germainAnalytics }}
+              memory: {{ .Values.spec.germainAnalytics.memoryLimit }}
+              cpu: {{ .Values.spec.germainAnalytics.cpuLimit }}
           ports:
           - containerPort: 8094
             name: container-port
@@ -369,7 +371,7 @@ spec:
             - name: GERMAIN_ENV
               value: "germain"
             - name: ZK_URL
-              value: "germainapm-zookeeper:2181"
+              value: "{{ .Values.spec.zookeeper.serviceName }}:2181"
             - name: ELASTIC_URL
               value: "true"
             - name: SERVICE_NAME
@@ -403,7 +405,7 @@ spec:
         args: [
           "/bin/sh",
           "-c",
-          "{{ .Values.storageServiceCheck }}"
+          "{{ .Values.ServiceCheck.storage }}"
         ]
         securityContext:
           privileged: true
@@ -413,10 +415,10 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: germainapm-aggregation
+  name: {{ .Values.spec.germainAggregation.serviceName }}
 spec:
-  replicas: {{ .Values.replicas.germainAggregation }}
-  minReadySeconds: {{ .Values.minReadySeconds }}
+  replicas: {{ .Values.spec.germainAggregation.replicas }}
+  minReadySeconds: {{ .Values.spec.germainAggregation.minReadySeconds }}
   strategy:
     type: Recreate
   selector:
@@ -433,16 +435,16 @@ spec:
           hostPath:
             path: /opt/var
       containers:
-        - image: {{ .Values.image.germainServices }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - image: "{{ .Values.spec.germainAggregation.name }}:{{ .Values.spec.germainAggregation.tag }}"
+          imagePullPolicy: {{ .Values.spec.germainAggregation.pullPolicy }}
           name: germainapm-aggregation
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory.germainAggregation }}
-              cpu: {{ .Values.resources.requests.cpu.germainAggregation }}
+              memory: {{ .Values.spec.germainAggregation.memoryRequest }}
+              cpu: {{ .Values.spec.germainAggregation.cpuRequest }}
             limits:
-              memory: {{ .Values.resources.limits.memory.germainAggregation }}
-              cpu: {{ .Values.resources.limits.cpu.germainAggregation }}
+              memory: {{ .Values.spec.germainAggregation.memoryLimit }}
+              cpu: {{ .Values.spec.germainAggregation.cpuLimit }}
           ports:
           - containerPort: 8092
             name: container-port
@@ -450,7 +452,7 @@ spec:
             - name: GERMAIN_ENV
               value: "germain"
             - name: ZK_URL
-              value: "germainapm-zookeeper:2181"
+              value: "{{ .Values.spec.zookeeper.serviceName }}:2181"
             - name: ELASTIC_URL
               value: "true"
             - name: SERVICE_NAME
@@ -484,7 +486,7 @@ spec:
         args: [
           "/bin/sh",
           "-c",
-          "{{ .Values.storageServiceCheck }}"
+          "{{ .Values.ServiceCheck.storage }}"
         ]
         securityContext:
           privileged: true
@@ -494,10 +496,10 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: germainapm-action
+  name: {{ .Values.spec.germainAction.serviceName }}
 spec:
-  replicas: {{ .Values.replicas.germainAction }}
-  minReadySeconds: {{ .Values.minReadySeconds }}
+  replicas: {{ .Values.spec.germainAction.replicas }}
+  minReadySeconds: {{ .Values.spec.germainAction.minReadySeconds }}
   strategy:
     type: Recreate
   selector:
@@ -514,16 +516,16 @@ spec:
           hostPath:
             path: /opt/var
       containers:
-        - image: {{ .Values.image.germainServices }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - image: "{{ .Values.spec.germainAction.name }}:{{ .Values.spec.germainAction.tag }}"
+          imagePullPolicy: {{ .Values.spec.germainAction.pullPolicy }}
           name: germainapm-action
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory.germainAction }}
-              cpu: {{ .Values.resources.requests.cpu.germainAction }}
+              memory: {{ .Values.spec.germainAction.memoryRequest }}
+              cpu: {{ .Values.spec.germainAction.cpuRequest }}
             limits:
-              memory: {{ .Values.resources.limits.memory.germainAction }}
-              cpu: {{ .Values.resources.limits.cpu.germainAction }}
+              memory: {{ .Values.spec.germainAction.memoryLimit }}
+              cpu: {{ .Values.spec.germainAction.cpuLimit }}
           ports:
             - containerPort: 8080
               name: container-port
@@ -531,7 +533,7 @@ spec:
             - name: GERMAIN_ENV
               value: "germain"
             - name: ZK_URL
-              value: "germainapm-zookeeper:2181"
+              value: "{{ .Values.spec.zookeeper.serviceName }}:2181"
             - name: ELASTIC_URL
               value: "true"
             - name: SERVICE_NAME
@@ -563,7 +565,7 @@ spec:
         args: [
           "/bin/sh",
           "-c",
-          "{{ .Values.storageServiceCheck }}"
+          "{{ .Values.ServiceCheck.storage }}"
         ]
         securityContext:
           privileged: true

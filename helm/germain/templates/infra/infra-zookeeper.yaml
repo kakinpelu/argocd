@@ -18,7 +18,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: germainapm-zookeeper
+  name: {{ .Values.spec.zookeeper.serviceName }}
   labels:
     app: zookeeper
 spec:
@@ -44,7 +44,7 @@ kind: StatefulSet
 metadata:
   name: zookeeper
 spec:
-  replicas: {{ .Values.replicas.zookeeper }}
+  replicas: {{ .Values.spec.zookeeper.replicas }}
   updateStrategy:
     type: RollingUpdate
   selector:
@@ -81,15 +81,15 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: kubernetes-zookeeper
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        image: {{ .Values.image.zookeeper }}
+        imagePullPolicy: {{ .Values.spec.zookeeper.pullPolicy }}
+        image: "{{ .Values.spec.zookeeper.name }}:{{ .Values.spec.zookeeper.tag }}"
         resources:
           requests:
-            memory: {{ .Values.resources.requests.memory.zookeeper }}
-            cpu: {{ .Values.resources.requests.cpu.zookeeper }}
+            memory: {{ .Values.spec.zookeeper.memoryRequest }}
+            cpu: {{ .Values.spec.zookeeper.cpuRequest }}
           limits:
-            memory: {{ .Values.resources.limits.memory.zookeeper }}
-            cpu: {{ .Values.resources.limits.cpu.zookeeper }}
+            memory: {{ .Values.spec.zookeeper.memoryLimit }}
+            cpu: {{ .Values.spec.zookeeper.cpuLimit }}
         ports:
         - containerPort: 2181
           name: client
@@ -155,4 +155,4 @@ spec:
       storageClassName: ebs-sc
       resources:
         requests:
-          storage: {{ .Values.persistentVolumeClaim.zookeeper }}
+          storage: {{ .Values.spec.zookeeper.volumeClaim }}

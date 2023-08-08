@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: germainapm-elasticsearch
+  name: {{ .Values.spec.elasticSearch.serviceName }}
   labels:
     app: elastic
 spec:
@@ -21,7 +21,7 @@ kind: StatefulSet
 metadata:
   name: elastic
 spec:
-  replicas: {{ .Values.replicas.elasticSearch }}
+  replicas: {{ .Values.spec.elasticSearch.replicas }}
   updateStrategy:
     type: RollingUpdate
   volumeClaimTemplates:
@@ -34,8 +34,8 @@ spec:
       storageClassName: ebs-sc
       resources:
         requests:
-          storage: {{ .Values.persistentVolumeClaim.elasticSearch }}
-  serviceName: germainapm-elasticsearch
+          storage: {{ .Values.spec.elasticSearch.volumeClaim }}
+  serviceName: {{ .Values.spec.elasticSearch.serviceName }}
   selector:
     matchLabels:
       app: elastic
@@ -45,16 +45,16 @@ spec:
         app: elastic
     spec:
       containers:
-        - image: {{ .Values.image.elasticSearch }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - image: "{{ .Values.spec.elasticSearch.name }}:{{ .Values.spec.elasticSearch.tag }}"
+          imagePullPolicy: {{ .Values.spec.elasticSearch.pullPolicy }}
           name: elasticsearch
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory.elasticSearch }}
-              cpu: {{ .Values.resources.requests.cpu.elasticSearch }}
+              memory: {{ .Values.spec.elasticSearch.memoryRequest }}
+              cpu: {{ .Values.spec.elasticSearch.cpuRequest }}
             limits:
-              memory: {{ .Values.resources.limits.memory.elasticSearch }}
-              cpu: {{ .Values.resources.limits.cpu.elasticSearch }}
+              memory: {{ .Values.spec.elasticSearch.memoryLimit }}
+              cpu: {{ .Values.spec.elasticSearch.cpuLimit }}
           volumeMounts:
           - name: esdata
             mountPath: /usr/share/elasticsearch/data
@@ -75,7 +75,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: discovery.seed_hosts
-              value: "germainapm-elasticsearch"
+              value: "{{ .Values.spec.elasticSearch.serviceName }}"
             - name: cluster.initial_master_nodes
               value: "elastic-0,elastic-1"
             - name: xpack.security.enabled
@@ -87,7 +87,7 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "-c", "cd /usr/share/elasticsearch/plugins && curl -L https://github.com/germainsoftware/germain-es-plugin/releases/download/v{{.Values.elasticSearchVersion}}/germainapm-es-plugin-{{.Values.elasticSearchVersion}}.zip --output germainapm-es-plugin.zip && unzip -d germainapm-es-plugin germainapm-es-plugin.zip && rm -f germainapm-es-plugin.zip"]
+                command: ["/bin/sh", "-c", "cd /usr/share/elasticsearch/plugins && curl -L https://github.com/germainsoftware/germain-es-plugin/releases/download/v{{.Values.spec.elasticSearch.tag}}/germainapm-es-plugin-{{.Values.spec.elasticSearch.tag}}.zip --output germainapm-es-plugin.zip && unzip -d germainapm-es-plugin germainapm-es-plugin.zip && rm -f germainapm-es-plugin.zip"]
       initContainers:
       - name: fix-permissions
         image: busybox

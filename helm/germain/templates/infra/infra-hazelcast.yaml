@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: germainapm-hazelcast
+  name: {{ .Values.spec.hazelcast.serviceName }}
 spec:
   clusterIP: None
   selector:
@@ -18,7 +18,7 @@ kind: Deployment
 metadata:
   name: hazelcast
 spec:
-  replicas: {{ .Values.replicas.hazelcast }}
+  replicas: {{ .Values.spec.hazelcast.replicas }}
   selector:
     matchLabels:
       app: hazelcast
@@ -28,16 +28,16 @@ spec:
         app: hazelcast
     spec:
       containers:
-        - image: {{ .Values.image.hazelcast }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - image: "{{ .Values.spec.hazelcast.name }}:{{ .Values.spec.hazelcast.tag }}"
+          imagePullPolicy: {{ .Values.spec.hazelcast.pullPolicy }}
           name: hazelcast
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory.hazelcast }}
-              cpu: {{ .Values.resources.requests.cpu.hazelcast }}
+              memory: {{ .Values.spec.hazelcast.memoryRequest }}
+              cpu: {{ .Values.spec.hazelcast.cpuRequest }}
             limits:
-              memory: {{ .Values.resources.limits.memory.hazelcast }}
-              cpu: {{ .Values.resources.limits.cpu.hazelcast }}
+              memory: {{ .Values.spec.hazelcast.memoryLimit }}
+              cpu: {{ .Values.spec.hazelcast.cpuLimit }}
           ports:
             - containerPort: 5701
               name: hazelcast-port
