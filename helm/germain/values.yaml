@@ -1,3 +1,11 @@
+define: &germain_build_version '2023.3'
+define: &default_cpu_request '100m'
+define: &default_cpu_limit '1000m'
+define: &default_minReadySeconds 10
+define: &default_pullPolicy 'Always'
+define: &default_server_registry 'public.ecr.aws/h0m9e4y5/germainapm-server'
+define: &default_service_registry 'public.ecr.aws/h0m9e4y5/germainapm-services'
+
 germainDb:
   Hostname: "germain-db.crs7ftpnebbj.us-west-2.rds.amazonaws.com"
   Port: "3306"
@@ -35,137 +43,137 @@ spec:
   elasticSearch:
     name: "elasticsearch"
     tag: "8.8.1"
-    pullPolicy: Always
+    pullPolicy: *default_pullPolicy
     replicas: 2
     serviceName: "germainapm-elasticsearch"
-    cpuRequest: 100m
-    cpuLimit: 1000m
+    cpuRequest: *default_cpu_request
+    cpuLimit: *default_cpu_limit
     memoryRequest: 1024Mi
     memoryLimit: 4096Mi
-    minReadySeconds: 10
+    minReadySeconds: *default_minReadySeconds
     volumeClaim: 10Gi
   kibana:
     name: "kibana"
     tag: "8.8.1"
-    pullPolicy: Always
+    pullPolicy: *default_pullPolicy
     replicas: 1
     serviceName: "germainapm-kibana"
-    cpuRequest: 100m
-    cpuLimit: 1000m
+    cpuRequest: *default_cpu_request
+    cpuLimit: *default_cpu_limit
     memoryRequest: 512Mi
     memoryLimit: 2048Mi
-    minReadySeconds: 10
+    minReadySeconds: *default_minReadySeconds
   activeMQ:
     name: "rmohr/activemq"
     tag: "latest"
-    pullPolicy: Always
+    pullPolicy: *default_pullPolicy
     replicas: 1
     serviceName: "germainapm-activemq"
-    cpuRequest: 100m
-    cpuLimit: 1000m
+    cpuRequest: *default_cpu_request
+    cpuLimit: *default_cpu_limit
     memoryRequest: 256Mi
     memoryLimit: 1024Mi
-    minReadySeconds: 10
+    minReadySeconds: *default_minReadySeconds
   zookeeper:
     name: "zookeeper"
     tag: "latest"
-    pullPolicy: Always
+    pullPolicy: *default_pullPolicy
     replicas: 2
     serviceName: "germainapm-zookeeper"
-    cpuRequest: 100m
-    cpuLimit: 1000m
+    cpuRequest: *default_cpu_request
+    cpuLimit: *default_cpu_limit
     memoryRequest: 256Mi
     memoryLimit: 1024Mi
-    minReadySeconds: 10
+    minReadySeconds: *default_minReadySeconds
     volumeClaim: 1Gi
   hazelcast:
     name: "hazelcast/hazelcast"
     tag: "5.2.2-SNAPSHOT"
-    pullPolicy: Always
+    pullPolicy: *default_pullPolicy
     replicas: 1
     serviceName: "germainapm-hazelcast"
-    cpuRequest: 100m
-    cpuLimit: 1000m
+    cpuRequest: *default_cpu_request
+    cpuLimit: *default_cpu_limit
     memoryRequest: 512Mi
     memoryLimit: 2048Mi
-    minReadySeconds: 10
+    minReadySeconds: *default_minReadySeconds
   germainServer:
-    name: "public.ecr.aws/h0m9e4y5/germainapm-server"
-    tag: "2023.2"
-    pullPolicy: Always
+    name: *default_server_registry
+    tag: *germain_build_version
+    pullPolicy: *default_pullPolicy
     replicas: 2
     serviceName: "germainapm-server"
-    cpuRequest: 100m
-    cpuLimit: 1000m
+    cpuRequest: *default_cpu_request
+    cpuLimit: *default_cpu_limit
     memoryRequest: 1024Mi
     memoryLimit: 4096Mi
-    minReadySeconds: 10
+    minReadySeconds: *default_minReadySeconds
   germainStorage:
-    name: "public.ecr.aws/h0m9e4y5/germainapm-services"
-    tag: "2023.2"
-    pullPolicy: Always
+    name: *default_service_registry
+    tag: *germain_build_version
+    pullPolicy: *default_pullPolicy
     replicas: 1
     serviceName: "germainapm-storage"
-    cpuRequest: 100m
-    cpuLimit: 1000m
+    cpuRequest: *default_cpu_request
+    cpuLimit: *default_cpu_limit
     memoryRequest: 1024Mi
     memoryLimit: 4096Mi
-    minReadySeconds: 10
+    minReadySeconds: *default_minReadySeconds
   germainSession:
-    name: "public.ecr.aws/h0m9e4y5/germainapm-services"
-    tag: "2023.2"
-    pullPolicy: Always
+    name: *default_service_registry
+    tag: *germain_build_version
+    pullPolicy: *default_pullPolicy
     replicas: 1
     serviceName: "germainapm-session"
-    cpuRequest: 100m
-    cpuLimit: 1000m
+    cpuRequest: *default_cpu_request
+    cpuLimit: *default_cpu_limit
     memoryRequest: 512Mi
     memoryLimit: 2048Mi
-    minReadySeconds: 10
+    minReadySeconds: *default_minReadySeconds
   germainAnalytics:
-    name: "public.ecr.aws/h0m9e4y5/germainapm-services"
-    tag: "2023.2"
-    pullPolicy: Always
+    name: *default_service_registry
+    tag: *germain_build_version
+    pullPolicy: *default_pullPolicy
     replicas: 1
     serviceName: "germainapm-analytics"
-    cpuRequest: 100m
-    cpuLimit: 1000m
+    cpuRequest: *default_cpu_request
+    cpuLimit: *default_cpu_limit
     memoryRequest: 512Mi
     memoryLimit: 2048Mi
-    minReadySeconds: 10
+    minReadySeconds: *default_minReadySeconds
   germainAggregation:
-    name: "public.ecr.aws/h0m9e4y5/germainapm-services"
-    tag: "2023.2"
-    pullPolicy: Always
+    name: *default_service_registry
+    tag: *germain_build_version
+    pullPolicy: *default_pullPolicy
     replicas: 1
     serviceName: "germainapm-aggregation"
-    cpuRequest: 100m
-    cpuLimit: 1000m
+    cpuRequest: *default_cpu_request
+    cpuLimit: *default_cpu_limit
     memoryRequest: 512Mi
     memoryLimit: 2048Mi
-    minReadySeconds: 10
+    minReadySeconds: *default_minReadySeconds
   germainAction:
-    name: "public.ecr.aws/h0m9e4y5/germainapm-services"
-    tag: "2023.2"
-    pullPolicy: Always
+    name: *default_service_registry
+    tag: *germain_build_version
+    pullPolicy: *default_pullPolicy
     replicas: 1
     serviceName: "germainapm-action"
-    cpuRequest: 100m
-    cpuLimit: 1000m
+    cpuRequest: *default_cpu_request
+    cpuLimit: *default_cpu_limit
     memoryRequest: 512Mi
     memoryLimit: 2048Mi
-    minReadySeconds: 10
+    minReadySeconds: *default_minReadySeconds
   germainRtm:
-    name: "public.ecr.aws/h0m9e4y5/germainapm-services"
-    tag: "2023.2"
-    pullPolicy: Always
+    name: *default_service_registry
+    tag: *germain_build_version
+    pullPolicy: *default_pullPolicy
     replicas: 1
     serviceName: "germainapm-rtm"
-    cpuRequest: 100m
-    cpuLimit: 1000m
+    cpuRequest: *default_cpu_request
+    cpuLimit: *default_cpu_limit
     memoryRequest: 512Mi
     memoryLimit: 2048Mi
-    minReadySeconds: 10
+    minReadySeconds: *default_minReadySeconds
 
 storageClass:
   name: "ebs-sc"
