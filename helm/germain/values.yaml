@@ -1,5 +1,5 @@
 germainDb:
-  Hostname: "germain-db.cecwb7t15tcw.us-west-2.rds.amazonaws.com"
+  Hostname: "germain-db.crs7ftpnebbj.us-west-2.rds.amazonaws.com"
   Port: "3306"
   Sid: "orclpdb" #Only applicable for Oracle
   clusterServiceName: "germainapm-db"
