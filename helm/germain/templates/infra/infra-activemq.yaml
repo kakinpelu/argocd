@@ -57,7 +57,7 @@ spec:
           configMap:
             name: activemq-env
       containers:
-        - image: "{{ .Values.spec.activeMQ.name }}:{{ .Values.spec.activeMQ.pullPolicy }}"
+        - image: "{{ .Values.spec.activeMQ.name }}:{{ .Values.spec.activeMQ.tag }}"
           imagePullPolicy: {{ .Values.spec.activeMQ.pullPolicy }}
           name: activemq
           resources:
