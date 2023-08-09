@@ -128,7 +128,7 @@ spec:
             - name: SERVICE_NAME
               value: "storage"
             - name: BOOTSTRAP_ARGS
-              value: "--upgrade-schema -r -f"
+              value: "-f"
           volumeMounts:
             - name: var-logs
               mountPath: /opt/services/var
