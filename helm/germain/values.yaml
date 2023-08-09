@@ -7,7 +7,7 @@ define: &default_server_registry 'public.ecr.aws/h0m9e4y5/germainapm-server'
 define: &default_service_registry 'public.ecr.aws/h0m9e4y5/germainapm-services'
 
 germainDb:
-  Hostname: "germain-db.crs7ftpnebbj.us-west-2.rds.amazonaws.com"
+  Hostname: "germain-db.c5zhejgafhpv.us-west-2.rds.amazonaws.com"
   Port: "3306"
   Sid: "orclpdb" #Only applicable for Oracle
   clusterServiceName: "germainapm-db"
